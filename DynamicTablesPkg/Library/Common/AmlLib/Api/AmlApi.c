@@ -20,6 +20,8 @@
 #include <AmlInclude.h>
 #include <Api/AmlApiHelper.h>
 #include <String/AmlString.h>
+#include <AmlTree.h>
+#include <Utils/AmlUtility.h>
 
 /** Update the name of a DeviceOp object node.
 
@@ -377,6 +379,117 @@ AmlNameOpGetNextRdNode (
   }
 
   return EFI_SUCCESS;
+}
+
+/**
+ * Wrappers for Aml library functions, which are not exposed in API
+ *
+ *
+**/
+
+/**
+ * Get fixed argument
+ *
+ * Obtain node's fixed argument indetified by Index
+ *
+ * @param [in]    ObjectNode                Node which contains desired fixed argument
+ * @param [in]    Index                     Index where argument is stored in list
+ *
+ * @retval        FixedArg                  Fixed argument
+**/
+AML_NODE_HANDLE
+EFIAPI
+AmlObtainFixedArgument (
+  IN AML_OBJECT_NODE_HANDLE ObjectNode,
+  IN UINT8                  Index
+)
+{
+
+  return AmlGetFixedArgument(ObjectNode, EAmlParseIndexTerm1);
+}
+
+/**
+ * Get next variable argument belonging to given node
+ *
+ * @param [in]    ObjectNode              Node which contains variable argument
+ * @param [in]    CurrVarArg              Argument, from which search should begin
+ *
+ * @retval        VarArg                  Variable Argument
+**/
+AML_NODE_HANDLE
+EFIAPI
+AmlObtainVariableArgument (
+  IN AML_NODE_HANDLE ObjectNode,
+  IN AML_NODE_HANDLE CurrVarArg
+  )
+{
+
+  return AmlGetNextVariableArgument(ObjectNode, CurrVarArg);
+
+}
+
+/**
+ * Get node's data buffer
+ *
+ * AmlLib does not expose node's definition outside library, so that modifications are
+ * impossible. Add wraper, to get node's data for further operations.
+ *
+ * @param [in]  Handle    Node which contains desired data buffer
+ *
+ * @retval      Buffer    Return pointer to node's data buffer
+**/
+UINT8*
+EFIAPI
+AmlGetAmlNodeHandleBuffer (
+  IN AML_NODE_HANDLE Handle
+  )
+{
+
+  return ((AML_DATA_NODE*) Handle)->Buffer;
+}
+
+EFI_STATUS
+EFIAPI
+AmlUpdateNode(
+  IN AML_DATA_NODE_HANDLE  * DataNode,
+  IN UINT32                  DataType,
+  IN UINT8                 * Buffer,
+  IN UINT32                  BufferSize
+  )
+{
+
+  return AmlUpdateDataNode((AML_DATA_NODE *) DataNode, DataType, Buffer, BufferSize);
+}
+
+EFI_STATUS
+EFIAPI
+AmlWriteTree (
+  IN      AML_ROOT_NODE_HANDLE   * RootNode,
+  IN      UINT8                  * Buffer,     OPTIONAL
+  IN  OUT UINT32                 * BufferSize
+  )
+{
+
+  return AmlSerializeTree((AML_ROOT_NODE *) RootNode, Buffer, BufferSize);
+}
+
+AML_ROOT_NODE_HANDLE *
+EFIAPI
+AmlGetRoot (
+  IN  CONST VOID   * Node
+  )
+{
+
+  return (AML_ROOT_NODE_HANDLE *) AmlGetRootNode(&(((AML_DATA_NODE *) Node)->NodeHeader));
+}
+
+EFI_STATUS
+EFIAPI
+UpdateChecksum (
+  IN EFI_ACPI_DESCRIPTION_HEADER *Table
+  )
+{
+  return AcpiPlatformChecksum(Table);
 }
 
 // DEPRECATED APIS

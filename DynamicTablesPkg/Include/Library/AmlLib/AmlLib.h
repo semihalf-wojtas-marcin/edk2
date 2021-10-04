@@ -787,6 +787,55 @@ AmlAddLpiState (
   IN  AML_OBJECT_NODE_HANDLE                    LpiNode
   );
 
+AML_NODE_HANDLE
+EFIAPI
+AmlObtainFixedArgument (
+  IN AML_OBJECT_NODE_HANDLE       ObjectHandle,
+  IN UINT8                        Index
+  );
+
+AML_NODE_HANDLE
+EFIAPI
+AmlObtainVariableArgument (
+  IN AML_NODE_HANDLE    ObjectHandle,
+  IN AML_NODE_HANDLE    CurrVarArg
+  );
+
+UINT8*
+EFIAPI
+AmlGetAmlNodeHandleBuffer (
+  IN AML_NODE_HANDLE    Handle
+  );
+
+EFI_STATUS
+EFIAPI
+AmlUpdateNode(
+  IN AML_DATA_NODE_HANDLE  * DataNode,
+  IN UINT32                  DataType,
+  IN UINT8                 * Buffer,
+  IN UINT32                  BufferSize
+  );
+
+EFI_STATUS
+EFIAPI
+AmlWriteTree (
+  IN      AML_ROOT_NODE_HANDLE    * RootNode,
+  IN      UINT8                   * Buffer,     OPTIONAL
+  IN  OUT UINT32                  * BufferSize
+  );
+
+AML_ROOT_NODE_HANDLE *
+EFIAPI
+AmlGetRoot (
+  IN  CONST VOID   * Node
+  );
+
+EFI_STATUS
+EFIAPI
+UpdateChecksum (
+  IN EFI_ACPI_DESCRIPTION_HEADER * Table
+  );
+
 // DEPRECATED APIS
 #ifndef DISABLE_NEW_DEPRECATED_INTERFACES
 
